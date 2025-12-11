@@ -28,6 +28,7 @@ type TransformGroupByDataToBarChartDataParams = {
   objectMetadataItems: ObjectMetadataItem[];
   configuration: BarChartConfiguration;
   aggregateOperation: string;
+  userTimezone: string;
 };
 
 type TransformGroupByDataToBarChartDataResult = {
@@ -65,6 +66,7 @@ export const transformGroupByDataToBarChartData = ({
   objectMetadataItems,
   configuration,
   aggregateOperation,
+  userTimezone,
 }: TransformGroupByDataToBarChartDataParams): TransformGroupByDataToBarChartDataResult => {
   const groupByFieldX = objectMetadataItem.fields.find(
     (field: FieldMetadataItem) =>
@@ -242,6 +244,7 @@ export const transformGroupByDataToBarChartData = ({
         aggregateOperation,
         objectMetadataItem,
         primaryAxisSubFieldName,
+        userTimezone,
       })
     : transformOneDimensionalGroupByToBarChartData({
         rawResults: filteredResultsWithDateGaps,
@@ -251,6 +254,7 @@ export const transformGroupByDataToBarChartData = ({
         aggregateOperation,
         objectMetadataItem,
         primaryAxisSubFieldName,
+        userTimezone,
       });
 
   return {

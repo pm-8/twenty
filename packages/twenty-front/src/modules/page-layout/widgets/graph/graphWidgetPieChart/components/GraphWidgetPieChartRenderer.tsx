@@ -6,6 +6,7 @@ import { useGraphPieChartWidgetData } from '@/page-layout/widgets/graph/graphWid
 import { type PieChartDataItem } from '@/page-layout/widgets/graph/graphWidgetPieChart/types/PieChartDataItem';
 import { assertPieChartWidgetOrThrow } from '@/page-layout/widgets/graph/utils/assertPieChartWidget';
 import { buildChartDrilldownQueryParams } from '@/page-layout/widgets/graph/utils/buildChartDrilldownQueryParams';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { coreIndexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/coreIndexViewIdFromObjectMetadataItemFamilySelector';
 import { lazy, Suspense } from 'react';
@@ -29,6 +30,8 @@ export const GraphWidgetPieChartRenderer = ({
 }) => {
   assertPieChartWidgetOrThrow(widget);
 
+  const { userTimezone } = useUserTimezone();
+
   const {
     data,
     loading,
@@ -41,6 +44,7 @@ export const GraphWidgetPieChartRenderer = ({
   } = useGraphPieChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
     configuration: widget.configuration,
+    userTimezone,
   });
 
   const navigate = useNavigate();

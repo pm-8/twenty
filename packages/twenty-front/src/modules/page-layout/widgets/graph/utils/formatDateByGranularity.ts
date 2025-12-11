@@ -1,7 +1,9 @@
+import { TZDate, tzOffset } from '@date-fns/tz';
+import { sub } from 'date-fns';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 
 export const formatDateByGranularity = (
-  date: Date,
+  dayString: string,
   granularity:
     | ObjectRecordGroupByDateGranularity.DAY
     | ObjectRecordGroupByDateGranularity.MONTH
@@ -9,7 +11,32 @@ export const formatDateByGranularity = (
     | ObjectRecordGroupByDateGranularity.YEAR
     | ObjectRecordGroupByDateGranularity.WEEK
     | ObjectRecordGroupByDateGranularity.NONE,
+  userTimezone: string,
 ): string => {
+  const unshiftedDate = new TZDate(dayString);
+
+  const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  const browserOffset = tzOffset(browserTimezone, unshiftedDate);
+
+  const userTimezoneOffset = tzOffset(userTimezone, unshiftedDate);
+
+  const finalOffset = userTimezoneOffset;
+
+  const date = sub(unshiftedDate, {
+    minutes: finalOffset,
+  });
+
+  console.log({
+    unshiftedDate,
+    date,
+    offset: finalOffset,
+    browserTimezone,
+    browserOffset,
+    userTimezone,
+    userTimezoneOffset,
+  });
+
   switch (granularity) {
     case ObjectRecordGroupByDateGranularity.DAY:
       return date.toLocaleDateString(undefined, {

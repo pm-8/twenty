@@ -13,6 +13,7 @@ import { type PieChartConfiguration } from '~/generated/graphql';
 type UseGraphPieChartWidgetDataProps = {
   objectMetadataItemId: string;
   configuration: PieChartConfiguration;
+  userTimezone: string;
 };
 
 type UseGraphPieChartWidgetDataResult = {
@@ -30,6 +31,7 @@ type UseGraphPieChartWidgetDataResult = {
 export const useGraphPieChartWidgetData = ({
   objectMetadataItemId,
   configuration,
+  userTimezone,
 }: UseGraphPieChartWidgetDataProps): UseGraphPieChartWidgetDataResult => {
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataItemId,
@@ -56,6 +58,7 @@ export const useGraphPieChartWidgetData = ({
         objectMetadataItems: objectMetadataItems ?? [],
         configuration,
         aggregateOperation,
+        userTimezone,
       }),
     [
       groupByData,
@@ -63,6 +66,7 @@ export const useGraphPieChartWidgetData = ({
       objectMetadataItems,
       configuration,
       aggregateOperation,
+      userTimezone,
     ],
   );
 

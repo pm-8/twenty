@@ -13,6 +13,7 @@ import { type BarChartConfiguration } from '~/generated/graphql';
 type UseGraphBarChartWidgetDataProps = {
   objectMetadataItemId: string;
   configuration: BarChartConfiguration;
+  userTimezone: string;
 };
 
 type UseGraphBarChartWidgetDataResult = {
@@ -37,6 +38,7 @@ type UseGraphBarChartWidgetDataResult = {
 export const useGraphBarChartWidgetData = ({
   objectMetadataItemId,
   configuration,
+  userTimezone,
 }: UseGraphBarChartWidgetDataProps): UseGraphBarChartWidgetDataResult => {
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataItemId,
@@ -64,6 +66,7 @@ export const useGraphBarChartWidgetData = ({
         objectMetadataItems: objectMetadataItems ?? [],
         configuration,
         aggregateOperation,
+        userTimezone,
       }),
     [
       groupByData,
