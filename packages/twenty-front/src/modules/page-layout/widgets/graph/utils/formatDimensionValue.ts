@@ -7,7 +7,7 @@ import {
   FieldMetadataType,
   ObjectRecordGroupByDateGranularity,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, parseToPlainDateOrThrow } from 'twenty-shared/utils';
 import { formatToShortNumber } from '~/utils/format/formatToShortNumber';
 
 type FormatDimensionValueParams = {
@@ -80,8 +80,6 @@ export const formatDimensionValue = ({
 
     case FieldMetadataType.DATE:
     case FieldMetadataType.DATE_TIME: {
-      const parsedDayString = String(value);
-
       if (
         effectiveDateGranularity ===
           ObjectRecordGroupByDateGranularity.DAY_OF_THE_WEEK ||
@@ -92,8 +90,11 @@ export const formatDimensionValue = ({
       ) {
         return String(value);
       }
+
+      const parsedPlainDate = parseToPlainDateOrThrow(String(value));
+
       return formatDateByGranularity(
-        parsedDayString,
+        parsedPlainDate,
         effectiveDateGranularity,
         userTimezone,
       );

@@ -66,13 +66,13 @@ export const getGroupByExpression = ({
         }
       }
 
-      return `TO_CHAR(${shiftedExpression}, 'YYYY-MM-DD')`;
+      return `TO_CHAR(${shiftedExpression} AT TIME ZONE '${groupByField.timeZone}', 'YYYY-MM-DD')`;
     }
     case ObjectRecordGroupByDateGranularity.DAY:
     case ObjectRecordGroupByDateGranularity.MONTH:
     case ObjectRecordGroupByDateGranularity.QUARTER:
     case ObjectRecordGroupByDateGranularity.YEAR:
-      return `TO_CHAR(DATE_TRUNC('${dateGranularity}', ${columnNameWithQuotes}, '${groupByField.timeZone}'), 'YYYY-MM-DD')`;
+      return `TO_CHAR(DATE_TRUNC('${dateGranularity}', ${columnNameWithQuotes}, '${groupByField.timeZone}') AT TIME ZONE '${groupByField.timeZone}', 'YYYY-MM-DD')`;
     default:
       assertUnreachable(dateGranularity);
   }

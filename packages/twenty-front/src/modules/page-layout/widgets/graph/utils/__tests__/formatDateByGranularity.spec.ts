@@ -1,9 +1,10 @@
+import { Temporal } from 'temporal-polyfill';
 import { ObjectRecordGroupByDateGranularity } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { formatDateByGranularity } from '../formatDateByGranularity';
 
 describe('formatDateByGranularity', () => {
-  const testDate = '2024-03-20';
+  const testDate = Temporal.PlainDate.from('2024-03-20');
   const userTimezone = 'Europe/Paris';
 
   beforeAll(() => {
@@ -71,7 +72,7 @@ describe('formatDateByGranularity', () => {
     });
 
     it('should format week within same month', () => {
-      const date = '2024-05-06';
+      const date = Temporal.PlainDate.from('2024-05-06');
       const result = formatDateByGranularity(
         date,
         ObjectRecordGroupByDateGranularity.WEEK,
@@ -81,7 +82,7 @@ describe('formatDateByGranularity', () => {
     });
 
     it('should format week crossing months', () => {
-      const date = '2024-05-27';
+      const date = Temporal.PlainDate.from('2024-05-27');
       const result = formatDateByGranularity(
         date,
         ObjectRecordGroupByDateGranularity.WEEK,
@@ -91,7 +92,7 @@ describe('formatDateByGranularity', () => {
     });
 
     it('should format week crossing years', () => {
-      const date = '2024-12-30';
+      const date = Temporal.PlainDate.from('2024-12-30');
       const result = formatDateByGranularity(
         date,
         ObjectRecordGroupByDateGranularity.WEEK,
@@ -128,7 +129,11 @@ describe('formatDateByGranularity', () => {
       'should calculate quarter for $granularity with date $date',
       ({ dayString, granularity }) => {
         expect(
-          formatDateByGranularity(dayString, granularity, 'Europe/Paris'),
+          formatDateByGranularity(
+            Temporal.PlainDate.from(dayString),
+            granularity,
+            'Europe/Paris',
+          ),
         ).toMatchSnapshot();
       },
     );
