@@ -44,7 +44,6 @@ export const GraphWidgetPieChartRenderer = ({
   } = useGraphPieChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
     configuration: widget.configuration,
-    userTimezone,
   });
 
   const navigate = useNavigate();
@@ -68,7 +67,7 @@ export const GraphWidgetPieChartRenderer = ({
         primaryBucketRawValue: rawValue,
       },
       viewId: indexViewId,
-      timezone: widget.configuration.timezone ?? undefined,
+      timezone: userTimezone,
     });
 
     const url = getAppPath(

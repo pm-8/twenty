@@ -6,6 +6,7 @@ import { getBarChartQueryLimit } from '@/page-layout/widgets/graph/graphWidgetBa
 import { transformGroupByDataToBarChartData } from '@/page-layout/widgets/graph/graphWidgetBarChart/utils/transformGroupByDataToBarChartData';
 import { useGraphWidgetGroupByQuery } from '@/page-layout/widgets/graph/hooks/useGraphWidgetGroupByQuery';
 import { type RawDimensionValue } from '@/page-layout/widgets/graph/types/RawDimensionValue';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { type BarDatum } from '@nivo/bar';
 import { useMemo } from 'react';
 import { type BarChartConfiguration } from '~/generated/graphql';
@@ -13,7 +14,6 @@ import { type BarChartConfiguration } from '~/generated/graphql';
 type UseGraphBarChartWidgetDataProps = {
   objectMetadataItemId: string;
   configuration: BarChartConfiguration;
-  userTimezone: string;
 };
 
 type UseGraphBarChartWidgetDataResult = {
@@ -38,12 +38,13 @@ type UseGraphBarChartWidgetDataResult = {
 export const useGraphBarChartWidgetData = ({
   objectMetadataItemId,
   configuration,
-  userTimezone,
 }: UseGraphBarChartWidgetDataProps): UseGraphBarChartWidgetDataResult => {
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataItemId,
   });
   const { objectMetadataItems } = useObjectMetadataItems();
+
+  const { userTimezone } = useUserTimezone();
 
   const limit = getBarChartQueryLimit(configuration);
 
@@ -74,6 +75,7 @@ export const useGraphBarChartWidgetData = ({
       objectMetadataItems,
       configuration,
       aggregateOperation,
+      userTimezone,
     ],
   );
 

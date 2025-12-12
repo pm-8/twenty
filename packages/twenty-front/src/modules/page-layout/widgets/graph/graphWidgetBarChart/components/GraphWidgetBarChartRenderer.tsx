@@ -51,7 +51,6 @@ export const GraphWidgetBarChartRenderer = ({
   } = useGraphBarChartWidgetData({
     objectMetadataItemId: widget.objectMetadataId,
     configuration: widget.configuration,
-    userTimezone,
   });
 
   const navigate = useNavigate();
@@ -90,7 +89,7 @@ export const GraphWidgetBarChartRenderer = ({
         primaryBucketRawValue: rawValue,
       },
       viewId: indexViewId,
-      timezone: configuration.timezone ?? undefined,
+      timezone: userTimezone,
     });
 
     const url = getAppPath(
