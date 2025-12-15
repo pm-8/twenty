@@ -48,16 +48,6 @@ export class CreateMessageChannelService {
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       authContext,
       async () => {
-        const connectedAccountRepository =
-          await this.globalWorkspaceOrmManager.getRepository<ConnectedAccountWorkspaceEntity>(
-            workspaceId,
-            'connectedAccount',
-          );
-
-        const connectedAccount = await connectedAccountRepository.findOne({
-          where: { id: connectedAccountId },
-        });
-
         const messageChannelRepository =
           await this.globalWorkspaceOrmManager.getRepository<MessageChannelWorkspaceEntity>(
             workspaceId,
@@ -81,12 +71,19 @@ export class CreateMessageChannelService {
           manager,
         );
 
-        if (isDefined(connectedAccount)) {
-          await this.syncMessageFoldersService.syncMessageFolders(
-            newMessageChannel as MessageChannelWorkspaceEntity,
-            workspaceId,
-          );
+        const createdMessageChannel = await messageChannelRepository.findOne({
+          where: { id: newMessageChannel.id },
+          relations: ['connectedAccount', 'messageFolders'],
+        });
+
+        if (!isDefined(createdMessageChannel)) {
+          throw new Error('Message channel not found');
         }
+
+        await this.syncMessageFoldersService.syncMessageFolders(
+          createdMessageChannel,
+          workspaceId,
+        );
 
         return newMessageChannel.id;
       },
