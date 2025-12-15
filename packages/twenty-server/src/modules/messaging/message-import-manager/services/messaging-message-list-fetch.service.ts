@@ -8,7 +8,6 @@ import { In, MoreThanOrEqual } from 'typeorm';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
@@ -35,6 +34,11 @@ import {
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 import { MessagingProcessFolderActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
+
+type SyncedMessageFolder = Pick<
+  MessageFolderWorkspaceEntity,
+  'id' | 'name' | 'isSynced' | 'isSentFolder' | 'externalId' | 'syncCursor'
+>;
 
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
 
@@ -127,31 +131,13 @@ export class MessagingMessageListFetchService {
             },
           };
 
-          const datasource =
-            await this.globalWorkspaceOrmManager.getDataSourceForWorkspace(
+          const messageFolders: SyncedMessageFolder[] =
+            await this.syncMessageFoldersService.syncMessageFolders(
+              messageChannelWithFreshTokens,
               workspaceId,
             );
 
-          await this.syncMessageFoldersService.syncMessageFolders({
-            workspaceId,
-            messageChannel: messageChannelWithFreshTokens,
-            manager: datasource.manager as WorkspaceEntityManager,
-          });
-
-          const messageFolderRepository =
-            await this.globalWorkspaceOrmManager.getRepository<MessageFolderWorkspaceEntity>(
-              workspaceId,
-              'messageFolder',
-            );
-
-          const messageFolders = await messageFolderRepository.find({
-            where: {
-              messageChannelId: freshMessageChannel.id,
-              pendingSyncAction: MessageFolderPendingSyncAction.NONE,
-            },
-          });
-
-          const messageFoldersToSync =
+          const messageFoldersToSync: SyncedMessageFolder[] =
             messageChannelWithFreshTokens.messageFolderImportPolicy ===
             MessageFolderImportPolicy.ALL_FOLDERS
               ? messageFolders
@@ -362,18 +348,11 @@ export class MessagingMessageListFetchService {
     messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ): Promise<boolean> {
-    const messageFolderRepository =
-      await this.globalWorkspaceOrmManager.getRepository<MessageFolderWorkspaceEntity>(
-        workspaceId,
-        'messageFolder',
-      );
-
-    const foldersWithPendingActions = await messageFolderRepository.find({
-      where: {
-        messageChannelId: messageChannel.id,
-        pendingSyncAction: MessageFolderPendingSyncAction.FOLDER_DELETION,
-      },
-    });
+    const foldersWithPendingActions = messageChannel.messageFolders.filter(
+      (folder) =>
+        isDefined(folder.pendingSyncAction) &&
+        folder.pendingSyncAction !== MessageFolderPendingSyncAction.NONE,
+    );
 
     if (foldersWithPendingActions.length === 0) {
       return false;
