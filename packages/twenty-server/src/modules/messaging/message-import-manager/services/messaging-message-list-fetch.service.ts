@@ -18,10 +18,7 @@ import {
   MessageChannelWorkspaceEntity,
   MessageFolderImportPolicy,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import {
-  MessageFolderPendingSyncAction,
-  MessageFolderWorkspaceEntity,
-} from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { MessageFolderPendingSyncAction } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
@@ -34,11 +31,6 @@ import {
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 import { MessagingProcessFolderActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-folder-actions.service';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
-
-type SyncedMessageFolder = Pick<
-  MessageFolderWorkspaceEntity,
-  'id' | 'name' | 'isSynced' | 'isSentFolder' | 'externalId' | 'syncCursor'
->;
 
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
 
@@ -131,13 +123,13 @@ export class MessagingMessageListFetchService {
             },
           };
 
-          const messageFolders: SyncedMessageFolder[] =
+          const messageFolders =
             await this.syncMessageFoldersService.syncMessageFolders(
               messageChannelWithFreshTokens,
               workspaceId,
             );
 
-          const messageFoldersToSync: SyncedMessageFolder[] =
+          const messageFoldersToSync =
             messageChannelWithFreshTokens.messageFolderImportPolicy ===
             MessageFolderImportPolicy.ALL_FOLDERS
               ? messageFolders

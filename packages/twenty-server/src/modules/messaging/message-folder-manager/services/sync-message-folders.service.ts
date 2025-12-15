@@ -15,17 +15,6 @@ import { GmailGetAllFoldersService } from 'src/modules/messaging/message-folder-
 import { ImapGetAllFoldersService } from 'src/modules/messaging/message-folder-manager/drivers/imap/services/imap-get-all-folders.service';
 import { MicrosoftGetAllFoldersService } from 'src/modules/messaging/message-folder-manager/drivers/microsoft/services/microsoft-get-all-folders.service';
 
-type SyncedMessageFolder = Pick<
-  MessageFolderWorkspaceEntity,
-  | 'id'
-  | 'name'
-  | 'isSynced'
-  | 'isSentFolder'
-  | 'externalId'
-  | 'syncCursor'
-  | 'parentFolderId'
->;
-
 @Injectable()
 export class SyncMessageFoldersService {
   constructor(
@@ -38,7 +27,7 @@ export class SyncMessageFoldersService {
   async syncMessageFolders(
     messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
-  ): Promise<SyncedMessageFolder[]> {
+  ): Promise<MessageFolder[]> {
     const discoveredFolders = await this.discoverAllFolders(
       messageChannel.connectedAccount,
       messageChannel,
@@ -87,10 +76,10 @@ export class SyncMessageFoldersService {
 
   private async syncFolderChanges(
     discoveredFolders: MessageFolder[],
-    existingFolders: SyncedMessageFolder[],
+    existingFolders: MessageFolder[],
     messageChannelId: string,
     workspaceId: string,
-  ): Promise<SyncedMessageFolder[]> {
+  ): Promise<MessageFolder[]> {
     const existingFoldersByExternalId = new Map(
       existingFolders.map((folder) => [folder.externalId, folder]),
     );

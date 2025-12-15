@@ -47,6 +47,7 @@ const createMockDiscoveredFolder = (
   isSynced: false,
   isSentFolder: false,
   parentFolderId: null,
+  id: `folder-${Math.random().toString(36).substring(7)}`,
   ...overrides,
 });
 
