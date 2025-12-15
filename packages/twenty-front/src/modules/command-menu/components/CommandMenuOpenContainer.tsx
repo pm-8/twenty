@@ -16,7 +16,9 @@ import { useTheme } from '@emotion/react';
 
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { useRef } from 'react';
+// FIX 1: Imports added correctly here
+import { useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -49,6 +51,12 @@ export const CommandMenuOpenContainer = ({
   const theme = useTheme();
 
   const { closeCommandMenu } = useCommandMenu();
+  const location = useLocation();
+
+  // FIX 2: The Logic to stop the crash
+  useEffect(() => {
+    closeCommandMenu();
+  }, [location.pathname, closeCommandMenu]);
 
   const commandMenuRef = useRef<HTMLDivElement>(null);
 

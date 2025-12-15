@@ -114,6 +114,8 @@ services:
       POSTGRES_DB: ${PG_DATABASE_NAME:-default}
       POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD:-postgres}
       POSTGRES_USER: ${PG_DATABASE_USER:-postgres}
+    ports:
+      - "5432:5432"
     healthcheck:
       test: pg_isready -U ${PG_DATABASE_USER:-postgres} -h localhost -d postgres
       interval: 5s
@@ -123,6 +125,8 @@ services:
 
   redis:
     image: redis
+    ports:
+      - "6379:6379"
     restart: always
     command: ["--maxmemory-policy", "noeviction"]
     healthcheck:
