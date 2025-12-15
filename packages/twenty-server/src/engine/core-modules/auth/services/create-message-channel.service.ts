@@ -82,14 +82,10 @@ export class CreateMessageChannelService {
         );
 
         if (isDefined(connectedAccount)) {
-          await this.syncMessageFoldersService.syncMessageFolders({
+          await this.syncMessageFoldersService.syncMessageFolders(
+            newMessageChannel as MessageChannelWorkspaceEntity,
             workspaceId,
-            messageChannel: {
-              ...newMessageChannel,
-              connectedAccount,
-            },
-            manager,
-          });
+          );
         }
 
         return newMessageChannel.id;
